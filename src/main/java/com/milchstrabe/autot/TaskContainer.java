@@ -3,10 +3,16 @@ package com.milchstrabe.autot;
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class TaskContainer<T extends AbstractTask>{
 
     private final Map<ITimeType,AbstractTask> container = new ConcurrentHashMap();
+
+    private static final Lock lock = new ReentrantLock();
+    private static final Condition condition = lock.newCondition();
 
     private ExecutorService workExecutor;
 
@@ -16,9 +22,14 @@ public class TaskContainer<T extends AbstractTask>{
 
     private static final int RANGE = 1000;
 
-    public synchronized void put(ITimeType key,T task){
+    public void put(ITimeType key,T task){
+        boolean is0 = container.size() == 0 ? true : false;
         container.put(key,task);
-        this.notifyAll();
+        if(is0){
+            lock.lock();
+            condition.signalAll();
+            lock.unlock();
+        }
     }
 
     public TaskContainer(int nThreads){
@@ -26,11 +37,7 @@ public class TaskContainer<T extends AbstractTask>{
         bossExecutor.execute(new Runnable() {
             @Override
             public void run() {
-                try {
-                    l00p();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                l00p();
             }
         });
     }
@@ -43,28 +50,36 @@ public class TaskContainer<T extends AbstractTask>{
 //        return Instance.instance;
 //    }
 
-    private synchronized void l00p() throws InterruptedException {
-        while (true){
-            if(container.size() == 0){
-                System.out.printf("阻塞boss线程");
-               this.wait();
-            }
-            int times = 10;
-            long mark1 = System.currentTimeMillis();
-            do{
-                container.entrySet().stream().forEach( entry -> {
-                    ITimeType key = entry.getKey();
-                    if(key.j()){
-                        workExecutor.execute(entry.getValue());
-                        container.remove(key);
+    private void l00p()  {
+        try {
+            lock.lock();
+            while (true) {
+                if (container.size() == 0) {
+                    condition.await();
+                }else {
+                    long mark1 = System.currentTimeMillis();
+                    int times = 1;
+                    do {
+                        container.entrySet().stream().forEach(entry -> {
+                            ITimeType key = entry.getKey();
+                            if (key.j()) {
+                                workExecutor.execute(entry.getValue());
+                                container.remove(key);
+                            }
+                        });
+                        times++;
+                    } while (times <= LENGTH);
+                    long val = System.currentTimeMillis() - mark1;
+                    if (val <= RANGE) {
+                        TimeUnit.MILLISECONDS.sleep(val);
                     }
-                 });
-                times++;
-            }while (times <= LENGTH);
-            long val = System.currentTimeMillis() - mark1;
-            if(val <= RANGE){
-                TimeUnit.MILLISECONDS.sleep(val);
+                }
             }
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        }finally {
+            lock.unlock();
         }
+
     }
 }
