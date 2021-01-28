@@ -1,23 +1,29 @@
 package com.milchstrabe.autot;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.*;
 import java.util.concurrent.TimeUnit;
 
 public class TaskContainer<T extends AbstractTask>{
 
     private final Map<ITimeType,AbstractTask> container = new ConcurrentHashMap();
 
+    private ExecutorService workExecutor;
+
+    private ExecutorService bossExecutor = Executors.newSingleThreadExecutor();
+
     private static final int LENGTH = 10;
 
     private static final int RANGE = 1000;
 
-    public void put(ITimeType key,T task){
+    public synchronized void put(ITimeType key,T task){
         container.put(key,task);
+        this.notifyAll();
     }
 
-    private TaskContainer(){
-        new Thread(new Runnable() {
+    public TaskContainer(int nThreads){
+        workExecutor = Executors.newFixedThreadPool(nThreads);
+        bossExecutor.execute(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -26,23 +32,22 @@ public class TaskContainer<T extends AbstractTask>{
                     e.printStackTrace();
                 }
             }
-        }).start();
+        });
     }
 
-    private static class Instance{
-        private static  TaskContainer instance = new TaskContainer();
-    }
+//    private static class Instance{
+//        private static  TaskContainer instance = new TaskContainer();
+//    }
 
-    public static TaskContainer INSTANCE(){
-        return Instance.instance;
-    }
+//    public static TaskContainer INSTANCE(){
+//        return Instance.instance;
+//    }
 
-    private void l00p() throws InterruptedException {
+    private synchronized void l00p() throws InterruptedException {
         while (true){
             if(container.size() == 0){
-                System.out.printf("container size %d,sleep:%s\r\n",container.size(),"1000ms");
-                TimeUnit.SECONDS.sleep(1);
-                continue;
+                System.out.printf("阻塞boss线程");
+               this.wait();
             }
             int times = 10;
             long mark1 = System.currentTimeMillis();
@@ -50,7 +55,7 @@ public class TaskContainer<T extends AbstractTask>{
                 container.entrySet().stream().forEach( entry -> {
                     ITimeType key = entry.getKey();
                     if(key.j()){
-                        new Thread(entry.getValue()).start();
+                        workExecutor.execute(entry.getValue());
                         container.remove(key);
                     }
                  });

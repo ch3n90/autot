@@ -1,6 +1,8 @@
 package com.milchstrabe.autot;
 
-public abstract class AbstractTask implements Runnable{
+public abstract class AbstractTask<T> implements Runnable{
+
+    protected T data;
 
     @Override
     public void run() {
@@ -8,4 +10,8 @@ public abstract class AbstractTask implements Runnable{
     }
 
     public abstract void job();
+
+    public void setData(T data) {
+        this.data = data;
+    }
 }

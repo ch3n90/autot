@@ -9,13 +9,13 @@ public class AppTest
 
     @Test
     public void test() throws IOException {
-        TaskContainer taskContainer = TaskContainer.INSTANCE();
-        taskContainer.put(new TTL(30, TimeUnit.SECONDS), new AbstractTask() {
-            @Override
-            public void job() {
-                System.out.println("30s, start running");
-            }
-        });
+        TaskContainer taskContainer = new TaskContainer(5);
+//        taskContainer.put(new TTL(30, TimeUnit.SECONDS), new AbstractTask() {
+//            @Override
+//            public void job() {
+//                System.out.println("30s, start running");
+//            }
+//        });
         System.in.read();
     }
 }
