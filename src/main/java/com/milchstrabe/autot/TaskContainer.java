@@ -32,7 +32,11 @@ public class TaskContainer<T extends AbstractTask>{
         }
     }
 
-    public TaskContainer(int nThreads){
+    protected AbstractTask get(ITimeType timeType){
+        return container.get(timeType);
+    }
+
+    private TaskContainer(int nThreads){
         workExecutor = Executors.newFixedThreadPool(nThreads);
         bossExecutor.execute(new Runnable() {
             @Override
@@ -42,13 +46,13 @@ public class TaskContainer<T extends AbstractTask>{
         });
     }
 
-//    private static class Instance{
-//        private static  TaskContainer instance = new TaskContainer();
-//    }
+    private static class Instance{
+        private static  TaskContainer instance = new TaskContainer(5);
+    }
 
-//    public static TaskContainer INSTANCE(){
-//        return Instance.instance;
-//    }
+    public static TaskContainer INSTANCE(){
+        return Instance.instance;
+    }
 
     private void l00p()  {
         try {
@@ -62,7 +66,7 @@ public class TaskContainer<T extends AbstractTask>{
                     do {
                         container.entrySet().stream().forEach(entry -> {
                             ITimeType key = entry.getKey();
-                            if (key.j()) {
+                            if (key.j().isRun()) {
                                 workExecutor.execute(entry.getValue());
                                 container.remove(key);
                             }

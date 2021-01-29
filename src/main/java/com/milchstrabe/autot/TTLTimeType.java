@@ -1,6 +1,6 @@
 package com.milchstrabe.autot;
 
-public class TTL implements ITimeType<Integer>{
+public class TTLTimeType implements ITimeType<Integer>{
 
     private long now = System.currentTimeMillis();
 
@@ -8,17 +8,17 @@ public class TTL implements ITimeType<Integer>{
 
     private TimeUnit timeUnit = TimeUnit.SECONDS;
 
-    public TTL(int delay, TimeUnit timeUnit) {
+    public TTLTimeType(int delay, TimeUnit timeUnit) {
         this.delay = delay;
         this.timeUnit = timeUnit;
     }
 
-    public TTL(int delay) {
+    public TTLTimeType(int delay) {
         this.delay = delay;
     }
 
     @Override
-    public boolean j() {
-        return delay * timeUnit.val() + now <= System.currentTimeMillis();
+    public Result j() {
+        return new Result(delay * timeUnit.val() + now <= System.currentTimeMillis());
     }
 }
