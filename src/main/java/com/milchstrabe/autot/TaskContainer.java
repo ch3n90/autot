@@ -15,7 +15,7 @@ public class TaskContainer<T extends AbstractTask>{
     private static final Condition condition = lock.newCondition();
 
     private ThreadPoolExecutor workExecutor = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(),
-            Integer.MAX_VALUE,60,
+            Short.MAX_VALUE,60,
             TimeUnit.SECONDS,
             new LinkedBlockingQueue<>());
 
