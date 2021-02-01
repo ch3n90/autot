@@ -17,7 +17,7 @@ public class TaskContainer<T extends AbstractTask>{
     private ThreadPoolExecutor workExecutor = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(),
             Integer.MAX_VALUE,60,
             TimeUnit.SECONDS,
-            new ArrayBlockingQueue<>(Integer.MAX_VALUE));
+            new LinkedBlockingQueue<>());
 
     private ExecutorService bossExecutor = Executors.newSingleThreadExecutor();
 

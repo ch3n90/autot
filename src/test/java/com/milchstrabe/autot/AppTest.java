@@ -20,15 +20,16 @@ public class AppTest
         taskContainer.put(new CustomizedFunctionTimeType<CustomizedFunctionParam>(new CustomizedFunctionParam(5,System.currentTimeMillis() + 5 * 1000),
             a -> {
                 if(a.timestamp < System.currentTimeMillis()){
+                    System.out.println("current index:" + a.index);
                     return new CustomizedFunctionResult(true,System.currentTimeMillis() + 1000 * 15);
                 }else {
-                    return new CustomizedFunctionResult(false,0);
+                    return new CustomizedFunctionResult(false);
                 }
 
             }),new AbstractTask() {
             @Override
             public void job() {
-                System.out.println("30s, start running");
+                System.out.println(" start running");
             }
         });
         System.in.read();
