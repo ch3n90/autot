@@ -2,19 +2,14 @@ package com.milchstrabe.autot;
 
 public class CustomizedFunctionResult extends Result{
 
+    protected long timestamp;
 
-    private long nextTimestamp;
-
-    public long getNextTimestamp() {
-        return nextTimestamp;
-    }
-
-    public void setNextTimestamp(long nextTimestamp) {
-        this.nextTimestamp = nextTimestamp;
-    }
-
-    public CustomizedFunctionResult(boolean isRun, long nextTimestamp) {
+    public CustomizedFunctionResult(boolean isRun) {
         super(isRun);
-        this.nextTimestamp = nextTimestamp;
+    }
+
+    public CustomizedFunctionResult(boolean isRun, long timestamp) {
+        super(isRun);
+        this.timestamp = timestamp;
     }
 }

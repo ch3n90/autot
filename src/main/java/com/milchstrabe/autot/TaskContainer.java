@@ -14,7 +14,10 @@ public class TaskContainer<T extends AbstractTask>{
     private static final Lock lock = new ReentrantLock();
     private static final Condition condition = lock.newCondition();
 
-    private ExecutorService workExecutor;
+    private ThreadPoolExecutor workExecutor = new ThreadPoolExecutor(Runtime.getRuntime().availableProcessors(),
+            Integer.MAX_VALUE,60,
+            TimeUnit.SECONDS,
+            new ArrayBlockingQueue<>(Integer.MAX_VALUE));
 
     private ExecutorService bossExecutor = Executors.newSingleThreadExecutor();
 
@@ -36,8 +39,7 @@ public class TaskContainer<T extends AbstractTask>{
         return container.get(timeType);
     }
 
-    private TaskContainer(int nThreads){
-        workExecutor = Executors.newFixedThreadPool(nThreads);
+    private TaskContainer(){
         bossExecutor.execute(new Runnable() {
             @Override
             public void run() {
@@ -47,7 +49,7 @@ public class TaskContainer<T extends AbstractTask>{
     }
 
     private static class Instance{
-        private static  TaskContainer instance = new TaskContainer(5);
+        private static  TaskContainer instance = new TaskContainer();
     }
 
     public static TaskContainer INSTANCE(){
@@ -66,7 +68,7 @@ public class TaskContainer<T extends AbstractTask>{
                     do {
                         container.entrySet().stream().forEach(entry -> {
                             ITimeType key = entry.getKey();
-                            if (key.j().isRun()) {
+                            if (key.j().isRun) {
                                 workExecutor.execute(entry.getValue());
                                 container.remove(key);
                             }

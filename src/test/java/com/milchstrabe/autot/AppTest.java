@@ -17,11 +17,9 @@ public class AppTest
 //            }
 //        });
 
-
-        taskContainer.put(new CustomizedFunctionTimeType(new CustomizedFunctionParam(5,System.currentTimeMillis() + 1000 * 10),
+        taskContainer.put(new CustomizedFunctionTimeType<CustomizedFunctionParam>(new CustomizedFunctionParam(5,System.currentTimeMillis() + 5 * 1000),
             a -> {
-
-                if(a < System.currentTimeMillis()){
+                if(a.timestamp < System.currentTimeMillis()){
                     return new CustomizedFunctionResult(true,System.currentTimeMillis() + 1000 * 15);
                 }else {
                     return new CustomizedFunctionResult(false,0);
