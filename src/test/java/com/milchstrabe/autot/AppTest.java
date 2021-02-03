@@ -10,7 +10,7 @@ public class AppTest
     @Test
     public void testTimestamp() throws IOException {
         TaskContainer taskContainer = TaskContainer.INSTANCE();
-        taskContainer.put(new TimestampTimeType(System.currentTimeMillis() + 1000 * 20), new AbstractTask() {
+        taskContainer.put(new TimestampTimeType(System.currentTimeMillis() + 1000 * 1000), new AbstractTask() {
             @Override
             public void job() {
                 System.out.println("20s, start running");
