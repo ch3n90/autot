@@ -1,10 +1,10 @@
 package com.milchstrabe.autot;
 
-public class TimestampTimeType implements ITimeType<Long>{
+public class TimestampType implements ITimeType<Long>{
 
     private long timestamp;
 
-    public TimestampTimeType(long timestamp) {
+    public TimestampType(long timestamp) {
         this.timestamp = timestamp;
     }
 

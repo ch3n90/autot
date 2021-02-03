@@ -1,0 +1,15 @@
+package com.milchstrabe.autot;
+
+public class FunctionResult extends Result{
+
+    protected long timestamp;
+
+    public FunctionResult(boolean isRun) {
+        super(isRun);
+    }
+
+    public FunctionResult(boolean isRun, long timestamp) {
+        super(isRun);
+        this.timestamp = timestamp;
+    }
+}

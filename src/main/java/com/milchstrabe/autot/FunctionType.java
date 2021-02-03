@@ -2,18 +2,18 @@ package com.milchstrabe.autot;
 
 import java.util.function.Function;
 
-public class CustomizedFunctionTimeType<T extends AbstractFunctionParam> implements ITimeType<Function<T,CustomizedFunctionResult>>{
+public class FunctionType<T extends AbstractFunctionParam> implements ITimeType<Function<T,FunctionResult>>{
 
-    private Function<T,CustomizedFunctionResult> func;
+    private Function<T,FunctionResult> func;
     private T param;
 
 
-    public CustomizedFunctionTimeType(T param,Function<T,CustomizedFunctionResult> function) {
+    public FunctionType(T param,Function<T,FunctionResult> function) {
         this.func = function;
         this.param = param;
     }
 
-    private CustomizedFunctionTimeType(Function<T, CustomizedFunctionResult> function, T param) {
+    private FunctionType(Function<T, FunctionResult> function, T param) {
         this.func = function;
         this.param = param;
     }
@@ -25,7 +25,7 @@ public class CustomizedFunctionTimeType<T extends AbstractFunctionParam> impleme
                 this.param.index++;
                 if(this.param.index < param.count){
                     this.param.timestamp = result.timestamp;
-                    TaskContainer.INSTANCE().put(new CustomizedFunctionTimeType(this.func, this.param),
+                    TaskContainer.INSTANCE().put(new FunctionType(this.func, this.param),
                             TaskContainer.INSTANCE().get(this));
                 }
             }
