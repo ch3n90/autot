@@ -26,7 +26,9 @@ public class DateType extends AbstractTimeType implements ITimeType<Integer>{
         int hour = now.getHour();
         int minute = now.getMinute();
         boolean result = toDay == this.day && hour == this.hour && minute == this.minute;
-        boolean result2 = toDay == lastTime.getDayOfMonth();
+        boolean result2 = lastTime.getYear() == now.getYear()
+                && lastTime.getMonthValue() == now.getMonthValue()
+                && lastTime.getDayOfMonth() == now.getDayOfMonth();
         if(result && (this.index < this.times || this.times < 0) && !result2){
             return buildRunResult(now);
         }

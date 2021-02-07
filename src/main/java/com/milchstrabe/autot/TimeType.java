@@ -20,7 +20,11 @@ public class TimeType extends AbstractTimeType implements ITimeType<Long>{
         LocalDateTime now = LocalDateTime.now();
         int minute = now.getMinute();
         boolean result = minute == this.minute;
-        if(result && (this.index < this.times || this.times < 0) && !now.minusHours(1).isBefore(lastTime)){
+        boolean result2 = lastTime.getYear() == now.getYear()
+                && lastTime.getMonthValue() == now.getMonthValue()
+                && lastTime.getDayOfMonth() == now.getDayOfMonth()
+                && lastTime.getHour() == now.getHour();
+        if(result && (this.index < this.times || this.times < 0) && !result2){
            return buildRunResult(now);
         }
         return new Result(false);
