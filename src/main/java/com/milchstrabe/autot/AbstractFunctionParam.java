@@ -13,7 +13,7 @@ public abstract class AbstractFunctionParam{
      */
     protected int count = 3;
 
-    protected long timestamp;
+    protected long timestamp = System.currentTimeMillis();
 
 
 }

@@ -3,42 +3,60 @@ package com.milchstrabe.autot;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.time.DayOfWeek;
 
 public class AppTest 
 {
 
     @Test
-    public void testTimestamp() throws IOException {
-        TaskContainer taskContainer = TaskContainer.INSTANCE();
-        taskContainer.put(new TimestampType(System.currentTimeMillis() + 1000 * 1000), new AbstractTask() {
+    public void testWeekType() throws IOException {
+        TaskContainer.INSTANCE().put(new WeekType(DayOfWeek.SUNDAY,15,24,2), new AbstractTask() {
             @Override
             public void job() {
-                System.out.println("20s, start running");
+                System.out.println("week type, start running");
             }
         });
-
         System.in.read();
     }
 
     @Test
-    public void testTTL() throws IOException {
-        TaskContainer taskContainer = TaskContainer.INSTANCE();
-        taskContainer.put(new DelayType(30, TimeUnit.SECONDS), new AbstractTask() {
+    public void testTimeType() throws IOException {
+        TaskContainer.INSTANCE().put(new TimeType(48,2), new AbstractTask() {
             @Override
             public void job() {
-                System.out.println("30s, start running");
+                System.out.println("time type, start running");
             }
         });
+        System.in.read();
+    }
 
+    @Test
+    public void testDelayType() throws IOException {
+        TaskContainer.INSTANCE().put(new DelayType(20, TimeUnit.SECONDS,-1), new AbstractTask() {
+            @Override
+            public void job() {
+                System.out.println("delay type, start running");
+            }
+        });
+        System.in.read();
+    }
+
+    @Test
+    public void testDateType() throws IOException {
+        TaskContainer.INSTANCE().put(new DateType(7, 15,55,2), new AbstractTask() {
+            @Override
+            public void job() {
+                System.out.println("date type, start running");
+            }
+        });
         System.in.read();
     }
 
     @Test
     public void testFunc() throws IOException {
-        TaskContainer taskContainer = TaskContainer.INSTANCE();
-
-        taskContainer.put(new FunctionType<FunctionParam>(new FunctionParam(5,System.currentTimeMillis() + 5 * 1000),
+        TaskContainer.INSTANCE().put(new FunctionType<FunctionParam>(new FunctionParam(5),
                 rt -> {
+
                     if(rt.timestamp < System.currentTimeMillis()){
                         System.out.println("current index:" + rt.index);
                         return new FunctionResult(true,System.currentTimeMillis() + 1000 * 15);
@@ -49,21 +67,11 @@ public class AppTest
                 }),new AbstractTask() {
             @Override
             public void job() {
-                System.out.println("start running");
+                System.out.println("func type, start running");
             }
         });
         System.in.read();
     }
 
-    @Test
-    public void testDay() throws IOException {
-        TaskContainer.INSTANCE().put(new DayType(2,true), new AbstractTask() {
-            @Override
-            public void job() {
-                System.out.println("20, start running");
-            }
-        });
 
-        System.in.read();
-    }
 }

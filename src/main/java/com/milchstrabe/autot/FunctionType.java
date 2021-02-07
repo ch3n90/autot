@@ -23,12 +23,13 @@ public class FunctionType<T extends AbstractFunctionParam> implements ITimeType<
         return func.andThen(result -> {
             if(result.isRun){
                 this.param.index++;
-                if(this.param.index < param.count){
+                if(this.param.index < this.param.count){
                     this.param.timestamp = result.timestamp;
-                    TaskContainer.INSTANCE().put(new FunctionType(this.func, this.param),
-                            TaskContainer.INSTANCE().get(this));
+                    result.isRemove = false;
+                    return result;
                 }
             }
+            result.isRemove = true;
             return result;
         }).apply(param);
     }

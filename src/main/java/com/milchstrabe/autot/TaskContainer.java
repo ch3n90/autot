@@ -68,9 +68,12 @@ public class TaskContainer<T extends AbstractTask>{
                     do {
                         container.entrySet().stream().forEach(entry -> {
                             ITimeType key = entry.getKey();
-                            if (key.j().isRun) {
+                            Result result = key.j();
+                            if (result.isRun) {
                                 workExecutor.execute(entry.getValue());
-                                container.remove(key);
+                                if(result.isRemove){
+                                    container.remove(key);
+                                }
                             }
                         });
                         times++;
